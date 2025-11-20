@@ -64,9 +64,18 @@ class _CoffeeListScreenState extends State<CoffeeListScreen> {
                   itemCount: coffees.length,
                   itemBuilder: (context, index) {
                     final coffee = coffees[index];
-                    return ListTile(
-                      title: Text(coffee.coffeeType?? 'No Type'),
-                      subtitle: Text(coffee.description ?? 'No Description'),
+                    return Card(
+                      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                      child: ListTile(
+                      title: Text(coffee.coffeeName?? 'No Coffee'),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                            Text(coffee.coffeeType ?? 'No coffee Type'),
+                            const SizedBox(height: 4),
+                            Text(coffee.description ?? 'No Description')
+                          ],
+                        ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
@@ -90,7 +99,7 @@ class _CoffeeListScreenState extends State<CoffeeListScreen> {
                                 builder: (ctx) => AlertDialog(
                                   title: const Text('Confirm Delete'),
                                   content: Text(
-                                      'Are you sure you want to delete "${coffee.coffeeType}"?'),
+                                      'Are you sure you want to delete "${coffee.coffeeName}"?'),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(ctx, false),
@@ -110,6 +119,7 @@ class _CoffeeListScreenState extends State<CoffeeListScreen> {
                             },
                           ),
                         ],
+                      ),
                       ),
                     );
                   },

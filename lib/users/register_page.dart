@@ -26,6 +26,7 @@ class _RegisterPageState extends State<RegisterPage> {
     String confirmPassword = txtConfirmPassword.text.trim();
 
     if (last_name.isEmpty|| first_name.isEmpty || age.isEmpty|| email.isEmpty || password.isEmpty) {
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill out all fields")),
       );
@@ -33,6 +34,7 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     if (password != confirmPassword) {
+      if(!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Passwords do not match")),
       );
@@ -40,6 +42,8 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     bool success = await AuthService.register(last_name, first_name, age , email, password, confirmPassword );
+
+    if (!mounted) return;
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -12,6 +12,7 @@ class CoffeeFormScreen extends StatefulWidget {
 
 class _CoffeeFormScreenState extends State<CoffeeFormScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   final _typeController = TextEditingController();
   final _descController = TextEditingController();
   bool _isSaving = false;
@@ -22,6 +23,7 @@ class _CoffeeFormScreenState extends State<CoffeeFormScreen> {
 
     // populate fields if editing
     if (widget.coffee != null) {
+      _nameController.text = widget.coffee!.coffeeName ?? '';
       _typeController.text = widget.coffee!.coffeeType ?? '';
       _descController.text = widget.coffee!.description ??  '';
     }
@@ -47,6 +49,12 @@ class _CoffeeFormScreenState extends State<CoffeeFormScreen> {
             key: _formKey,
             child: Column(
               children: [
+                TextFormField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(labelText: 'Coffee Name'),
+                  validator: (value) =>
+                      value == null || value.isEmpty ? 'Enter coffee name' : null,
+                ),
                 TextFormField(
                   controller: _typeController,
                   decoration: const InputDecoration(labelText: 'Coffee Type'),
@@ -80,7 +88,8 @@ class _CoffeeFormScreenState extends State<CoffeeFormScreen> {
     setState(() => _isSaving = true);
 
     final coffee = Coffee(
-      id: widget.coffee?.id,  // keep ID if updating
+      id: widget.coffee?.id,
+      coffeeName: _nameController.text,  // keep ID if updating
       coffeeType: _typeController.text,
       description: _descController.text,
     );
