@@ -28,7 +28,7 @@ class AuthService {
   }
 
   // ✅ Added register method (same pattern as login)
-  static Future<bool> register(String lastname, String firstname, String age, String email, String password) async {
+  static Future<bool> register(String lastname, String firstname, String age, String email, String password, String passwordConfirmation) async {
     final response = await http.post(
       Uri.parse('$baseUrl/register'),
       headers: {
@@ -38,9 +38,10 @@ class AuthService {
       body: jsonEncode({
         "last_name": lastname,
         "first_name": firstname,
-        "age": age,
+        "age": int.tryParse(age),
         "email": email,
         "password": password,
+        "password_confirmation": passwordConfirmation
       }),
     );
 

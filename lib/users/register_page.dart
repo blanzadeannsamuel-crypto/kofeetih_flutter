@@ -39,7 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    bool success = await AuthService.register(last_name, first_name, age , email, password, );
+    bool success = await AuthService.register(last_name, first_name, age , email, password, confirmPassword );
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
