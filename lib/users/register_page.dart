@@ -10,18 +10,22 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  TextEditingController txtName = TextEditingController();
+  TextEditingController txtLastName = TextEditingController();
+  TextEditingController txtFirstName = TextEditingController();
+  TextEditingController txtAge = TextEditingController();
   TextEditingController txtEmail = TextEditingController();
   TextEditingController txtPassword = TextEditingController();
   TextEditingController txtConfirmPassword = TextEditingController();
 
   void register() async {
-    String name = txtName.text.trim();
+    String last_name = txtLastName.text.trim();
+    String first_name = txtFirstName.text.trim();
+    String age = txtAge.text.trim();
     String email = txtEmail.text.trim();
     String password = txtPassword.text.trim();
     String confirmPassword = txtConfirmPassword.text.trim();
 
-    if (name.isEmpty || email.isEmpty || password.isEmpty) {
+    if (last_name.isEmpty|| first_name.isEmpty || age.isEmpty|| email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill out all fields")),
       );
@@ -35,7 +39,7 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    bool success = await AuthService.register(name, email, password);
+    bool success = await AuthService.register(last_name, first_name, age , email, password, );
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -65,9 +69,25 @@ class _RegisterPageState extends State<RegisterPage> {
           child: Column(
             children: [
               TextField(
-                controller: txtName,
+                controller: txtLastName,
                 decoration: const InputDecoration(
-                  labelText: "Full Name",
+                  labelText: "Last Name",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: txtFirstName,
+                decoration: const InputDecoration(
+                  labelText: "First Name",
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: txtAge,
+                decoration: const InputDecoration(
+                  labelText: "Age",
                   border: OutlineInputBorder(),
                 ),
               ),

@@ -19,9 +19,11 @@ class _CoffeeFormScreenState extends State<CoffeeFormScreen> {
   @override
   void initState() {
     super.initState();
+
+    // populate fields if editing
     if (widget.coffee != null) {
-      _typeController.text = widget.coffee!.coffee_type ?? '';
-      _descController.text = widget.coffee!.description ?? '';
+      _typeController.text = widget.coffee!.coffeeType ?? '';
+      _descController.text = widget.coffee!.description ??  '';
     }
   }
 
@@ -40,30 +42,32 @@ class _CoffeeFormScreenState extends State<CoffeeFormScreen> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _typeController,
-                decoration: const InputDecoration(labelText: 'Coffee Type'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter coffee type' : null,
-              ),
-              TextFormField(
-                controller: _descController,
-                decoration: const InputDecoration(labelText: 'Description'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Enter description' : null,
-              ),
-              const SizedBox(height: 20),
-              _isSaving
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _saveCoffee,
-                      child: Text(widget.coffee == null ? 'Save' : 'Update'),
-                    ),
-            ],
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: _typeController,
+                  decoration: const InputDecoration(labelText: 'Coffee Type'),
+                  validator: (value) =>
+                      value == null || value.isEmpty ? 'Enter coffee type' : null,
+                ),
+                TextFormField(
+                  controller: _descController,
+                  decoration: const InputDecoration(labelText: 'Description'),
+                  validator: (value) =>
+                      value == null || value.isEmpty ? 'Enter description' : null,
+                ),
+                const SizedBox(height: 20),
+                _isSaving
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
+                        onPressed: _saveCoffee,
+                        child: Text(widget.coffee == null ? 'Save' : 'Update'),
+                      ),
+              ],
+            ),
           ),
         ),
       ),
@@ -76,15 +80,16 @@ class _CoffeeFormScreenState extends State<CoffeeFormScreen> {
     setState(() => _isSaving = true);
 
     final coffee = Coffee(
-      coffee_type: _typeController.text,
+      id: widget.coffee?.id,  // keep ID if updating
+      coffeeType: _typeController.text,
       description: _descController.text,
     );
 
     try {
       if (widget.coffee == null) {
         await ApiService.createCoffee(coffee);
-      } else if (widget.coffee!.id != null) {
-        await ApiService.updateCoffee(widget.coffee!.id!, coffee);
+      } else {
+        await ApiService.updateCoffee(coffee.id!.toString(), coffee);
       }
       if (mounted) Navigator.pop(context, true);
     } catch (e) {

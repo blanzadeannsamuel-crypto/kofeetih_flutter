@@ -65,7 +65,7 @@ class _CoffeeListScreenState extends State<CoffeeListScreen> {
                   itemBuilder: (context, index) {
                     final coffee = coffees[index];
                     return ListTile(
-                      title: Text(coffee.coffee_type ?? 'No Type'),
+                      title: Text(coffee.coffeeType?? 'No Type'),
                       subtitle: Text(coffee.description ?? 'No Description'),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -90,7 +90,7 @@ class _CoffeeListScreenState extends State<CoffeeListScreen> {
                                 builder: (ctx) => AlertDialog(
                                   title: const Text('Confirm Delete'),
                                   content: Text(
-                                      'Are you sure you want to delete "${coffee.coffee_type}"?'),
+                                      'Are you sure you want to delete "${coffee.coffeeType}"?'),
                                   actions: [
                                     TextButton(
                                       onPressed: () => Navigator.pop(ctx, false),
@@ -104,7 +104,7 @@ class _CoffeeListScreenState extends State<CoffeeListScreen> {
                                 ),
                               );
                               if (confirm == true) {
-                                await ApiService.deleteCoffee(coffee.id!, _token!);
+                                await ApiService.deleteCoffee(coffee.id!.toString(), _token!);
                                 _refreshCoffees();
                               }
                             },
