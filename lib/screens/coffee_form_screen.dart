@@ -15,6 +15,9 @@ class _CoffeeFormScreenState extends State<CoffeeFormScreen> {
   final _nameController = TextEditingController();
   final _typeController = TextEditingController();
   final _descController = TextEditingController();
+  final _minpriController = TextEditingController();
+  final _maxpriController = TextEditingController();
+
   bool _isSaving = false;
 
   @override
@@ -26,13 +29,18 @@ class _CoffeeFormScreenState extends State<CoffeeFormScreen> {
       _nameController.text = widget.coffee!.coffeeName ?? '';
       _typeController.text = widget.coffee!.coffeeType ?? '';
       _descController.text = widget.coffee!.description ??  '';
+      _minpriController.text = widget.coffee!.minPrice?.toString() ?? '';
+      _maxpriController.text = widget.coffee!.maxPrice?.toString() ?? '';
     }
   }
 
   @override
   void dispose() {
+    _nameController.dispose();
     _typeController.dispose();
     _descController.dispose();
+    _minpriController.dispose();
+    _maxpriController.dispose();  
     super.dispose();
   }
 
@@ -67,6 +75,20 @@ class _CoffeeFormScreenState extends State<CoffeeFormScreen> {
                   validator: (value) =>
                       value == null || value.isEmpty ? 'Enter description' : null,
                 ),
+                TextFormField(
+                  controller: _minpriController,
+                  decoration: const InputDecoration(labelText: 'Minimum Price'),
+                  keyboardType: TextInputType.number,
+                  validator: (value) =>
+                      value == null || value.isEmpty ? 'Enter minimum price' : null,
+                ),
+                TextFormField(
+                  controller: _maxpriController,
+                  decoration: const InputDecoration(labelText: 'Maximum Price'),
+                  keyboardType: TextInputType.number,
+                  validator: (value) =>
+                      value == null || value.isEmpty ? 'Enter maximum price' : null,
+                ),
                 const SizedBox(height: 20),
                 _isSaving
                     ? const CircularProgressIndicator()
@@ -87,18 +109,22 @@ class _CoffeeFormScreenState extends State<CoffeeFormScreen> {
 
     setState(() => _isSaving = true);
 
-    final coffee = Coffee(
+    double? parsePrice(String text) => double.tryParse(text);
+
+    final coffee = Coffee (
       id: widget.coffee?.id,
       coffeeName: _nameController.text,  // keep ID if updating
       coffeeType: _typeController.text,
       description: _descController.text,
+      minPrice: parsePrice(_minpriController.text),
+      maxPrice: parsePrice(_maxpriController.text),
     );
 
     try {
       if (widget.coffee == null) {
         await ApiService.createCoffee(coffee);
       } else {
-        await ApiService.updateCoffee(coffee.id!.toString(), coffee);
+        await ApiService.updateCoffee(widget.coffee!.id!.toString(), coffee);
       }
       if (mounted) Navigator.pop(context, true);
     } catch (e) {

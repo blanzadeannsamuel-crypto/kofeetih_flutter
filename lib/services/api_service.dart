@@ -33,6 +33,13 @@ class ApiService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
+  final minPrice = double.tryParse(coffee.minPrice.toString()) ?? 0;
+  final maxPrice = double.tryParse(coffee.maxPrice.toString()) ?? 0;
+
+  if (minPrice > maxPrice) {
+    throw Exception('Minimum price cannot be greater than maximum price.');
+  }
+
     final response = await http.post(
       Uri.parse('$baseUrl/coffees'),
       headers: {
@@ -41,8 +48,11 @@ class ApiService {
         'Authorization': 'Bearer $token',
       },
       body: json.encode({
+        "coffee_name": coffee.coffeeName,
         "coffee_type": coffee.coffeeType,
         "description": coffee.description,
+        "minimum_price": minPrice,
+        "maximum_price": maxPrice,
       }),
     );
 
@@ -55,6 +65,14 @@ class ApiService {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
+    final minPrice = double.tryParse(coffee.minPrice.toString()) ?? 0;
+    final maxPrice = double.tryParse(coffee.maxPrice.toString()) ?? 0;
+
+    if (minPrice > maxPrice) {
+      throw Exception('Minimum price cannot be greater than maximum price.');
+    }
+
+
     final response = await http.put(
       Uri.parse('$baseUrl/coffees/$id'),
       headers: {
@@ -63,8 +81,11 @@ class ApiService {
         'Authorization': 'Bearer $token',
       },
       body: json.encode({
+        "coffee_name": coffee.coffeeName,
         "coffee_type": coffee.coffeeType,
         "description": coffee.description,
+        "minimum_price": minPrice,
+        "maximum_price": maxPrice,
       }),
     );
 

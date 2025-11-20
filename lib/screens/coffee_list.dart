@@ -73,7 +73,11 @@ class _CoffeeListScreenState extends State<CoffeeListScreen> {
                         children: [
                             Text(coffee.coffeeType ?? 'No coffee Type'),
                             const SizedBox(height: 4),
-                            Text(coffee.description ?? 'No Description')
+                            Text(coffee.description ?? 'No Description'),
+                            const SizedBox(height: 4),
+                            Text('Min Price: ${coffee.minPrice?.toString() ?? 'N/A'}'),
+                            const SizedBox(height: 4),
+                            Text('Max Price: ${coffee.maxPrice?.toString() ?? 'N/A'}'),
                           ],
                         ),
                       trailing: Row(
