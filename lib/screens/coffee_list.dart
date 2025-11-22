@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/coffee.dart';
 import '../services/api_service.dart';
 import 'coffee_form_screen.dart';
-
+import '../providers/auth_providers.dart';
 class CoffeeListScreen extends StatefulWidget {
   const CoffeeListScreen({super.key});
 
@@ -42,11 +43,39 @@ class _CoffeeListScreenState extends State<CoffeeListScreen> {
     print("coffee list refreshed");
   }
 
+  void _logout() async{
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Confirm Logout'),
+        content: const Text('Are you sure you want to logout?'),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false),
+          child: const Text('Cancel'),
+          ),
+          TextButton(onPressed: () => Navigator.pop(ctx, true),
+          child: const Text('Logout'),
+          ),
+        ],
+      ),
+    );
+
+    if(confirm == true){
+      Provider.of<AuthProvider>(context, listen: false).logout();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Coffee List')),
-      
+      appBar: AppBar(title: const Text('Coffee List'),
+      actions:[
+        IconButton(
+          icon: const Icon(Icons.logout),
+          onPressed: _logout,
+          ),
+        ],
+      ),
       body: _token == null
           ? const Center(child: CircularProgressIndicator())
           : FutureBuilder<List<Coffee>>(

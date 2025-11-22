@@ -25,7 +25,11 @@ class _RegisterPageState extends State<RegisterPage> {
     String password = txtPassword.text.trim();
     String confirmPassword = txtConfirmPassword.text.trim();
 
-    if (last_name.isEmpty|| first_name.isEmpty || age.isEmpty|| email.isEmpty || password.isEmpty) {
+    if (last_name.isEmpty ||
+        first_name.isEmpty ||
+        age.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill out all fields")),
@@ -34,14 +38,15 @@ class _RegisterPageState extends State<RegisterPage> {
     }
 
     if (password != confirmPassword) {
-      if(!mounted) return;
+      if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Passwords do not match")),
       );
       return;
     }
 
-    bool success = await AuthService.register(last_name, first_name, age , email, password, confirmPassword );
+    bool success = await AuthService.register(
+        last_name, first_name, age, email, password, confirmPassword);
 
     if (!mounted) return;
 
@@ -49,7 +54,6 @@ class _RegisterPageState extends State<RegisterPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Registration successful! Please log in.")),
       );
-      // Navigate back to LoginPage after successful registration
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const LoginPage()),
@@ -64,80 +68,118 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Register Page"),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              TextField(
-                controller: txtLastName,
-                decoration: const InputDecoration(
-                  labelText: "Last Name",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: txtFirstName,
-                decoration: const InputDecoration(
-                  labelText: "First Name",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: txtAge,
-                decoration: const InputDecoration(
-                  labelText: "Age",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: txtEmail,
-                decoration: const InputDecoration(
-                  labelText: "Email",
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: txtPassword,
-                decoration: const InputDecoration(
-                  labelText: "Password",
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 10),
-              TextField(
-                controller: txtConfirmPassword,
-                decoration: const InputDecoration(
-                  labelText: "Confirm Password",
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: register,
-                child: const Text("Register"),
-              ),
-              const SizedBox(height: 10),
-              TextButton(
-                onPressed: () {
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (context) => const LoginPage()),
-                  );
-                },
-                child: const Text("Already have an account? Login"),
-              ),
-            ],
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFFFFF8F0), Color(0xFFD8A47F)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
           ),
+        ),
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF1E6),
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.brown.shade200.withOpacity(0.4),
+                    blurRadius: 12,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 10),
+                  Icon(
+                    Icons.coffee_outlined,
+                    size: 80,
+                    color: const Color(0xFFB58C6E),
+                  ),
+                  const SizedBox(height: 12),
+                  const Text(
+                    "Kofeetih?",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF8B6D5C),
+                      fontFamily: 'Cursive',
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  _buildTextField(txtLastName, "Last Name"),
+                  const SizedBox(height: 16),
+                  _buildTextField(txtFirstName, "First Name"),
+                  const SizedBox(height: 16),
+                  _buildTextField(txtAge, "Age", keyboardType: TextInputType.number),
+                  const SizedBox(height: 16),
+                  _buildTextField(txtEmail, "Email", keyboardType: TextInputType.emailAddress),
+                  const SizedBox(height: 16),
+                  _buildTextField(txtPassword, "Password", obscureText: true),
+                  const SizedBox(height: 16),
+                  _buildTextField(txtConfirmPassword, "Confirm Password", obscureText: true),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: register,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFB58C6E),
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        shadowColor: Colors.brown.shade200,
+                        elevation: 6,
+                      ),
+                      child: const Text(
+                        "Register",
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const LoginPage()),
+                      );
+                    },
+                    child: const Text(
+                      "Already have an account? Login",
+                      style: TextStyle(color: Color(0xFF8B6D5C)),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label,
+      {bool obscureText = false, TextInputType keyboardType = TextInputType.text}) {
+    return TextField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(color: Color(0xFF8B6D5C)),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
         ),
       ),
     );
