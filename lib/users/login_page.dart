@@ -1,7 +1,9 @@
+import 'package:crud_lab/providers/auth_providers.dart';
 import "package:flutter/material.dart";
 import "package:crud_lab/services/auth_service.dart";
-import 'package:crud_lab/screens/coffee_list.dart';
-import 'register_page.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:crud_lab/users/register_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,10 +24,14 @@ class _LoginPageState extends State<LoginPage> {
 
     if (success) {
       // Navigate to CoffeeListScreen on success
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const CoffeeListScreen()),
-      );
+      final prefs = await SharedPreferences.getInstance();
+      String? token = prefs.getString('token');
+
+      if(token != null){
+        if (!mounted) return;
+
+        Provider.of<AuthProvider>(context, listen: false).login(token);
+      }
     } else {
       // Show error message if login failed
       ScaffoldMessenger.of(context).showSnackBar(

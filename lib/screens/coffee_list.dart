@@ -12,7 +12,7 @@ class CoffeeListScreen extends StatefulWidget {
 }
 
 class _CoffeeListScreenState extends State<CoffeeListScreen> {
-  late Future<List<Coffee>> _coffeeList;
+  late Future<List<Coffee>>? _coffeeList;
   String? _token;
 
   @override
@@ -38,12 +38,15 @@ class _CoffeeListScreenState extends State<CoffeeListScreen> {
     setState(() {
       _coffeeList = ApiService.getCoffees(token: _token!);
     });
+
+    print("coffee list refreshed");
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Coffee List')),
+      
       body: _token == null
           ? const Center(child: CircularProgressIndicator())
           : FutureBuilder<List<Coffee>>(
@@ -74,6 +77,8 @@ class _CoffeeListScreenState extends State<CoffeeListScreen> {
                             Text(coffee.coffeeType ?? 'No coffee Type'),
                             const SizedBox(height: 4),
                             Text(coffee.description ?? 'No Description'),
+                            const SizedBox(height: 4),
+                            Text(coffee.ingredients ?? 'No ingredients'),
                             const SizedBox(height: 4),
                             Text('Min Price: ${coffee.minPrice?.toString() ?? 'N/A'}'),
                             const SizedBox(height: 4),

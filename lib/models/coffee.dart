@@ -3,10 +3,11 @@ class Coffee {
   String? coffeeName;
   String? coffeeType;
   String? description;
+  String? ingredients;
   double? minPrice;
   double? maxPrice;
 
-  Coffee({this.id, this.coffeeName = '', this.coffeeType = '', this.description= '', this.minPrice, this.maxPrice,});
+  Coffee({this.id, this.coffeeName = '', this.coffeeType = '', this.description= '', this.ingredients= '', this.minPrice, this.maxPrice,});
 
   factory Coffee.fromJson(Map<String, dynamic> json) {
     // Safely parse ID
@@ -30,6 +31,7 @@ class Coffee {
       coffeeName: json['coffee_name']?.toString() ?? '',
       coffeeType: json['coffee_type']?.toString() ?? '',
       description: json['description']?.toString() ?? '',
+      ingredients: json['ingredients']?.toString() ?? '',
       minPrice: parseDouble(json['minimum_price']),
       maxPrice: parseDouble(json['maximum_price']),
 
@@ -42,6 +44,7 @@ class Coffee {
       'coffee_name': coffeeName,
       'coffee_type': coffeeType,
       'description': description,
+      'ingredients': ingredients,
       'minimum_price': minPrice,
       'maximum_price': maxPrice,
     };
