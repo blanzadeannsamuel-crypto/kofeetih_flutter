@@ -10,12 +10,12 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
-  TextEditingController txtLastName = TextEditingController();
-  TextEditingController txtFirstName = TextEditingController();
-  TextEditingController txtAge = TextEditingController();
-  TextEditingController txtEmail = TextEditingController();
-  TextEditingController txtPassword = TextEditingController();
-  TextEditingController txtConfirmPassword = TextEditingController();
+  final TextEditingController txtLastName = TextEditingController();
+  final TextEditingController txtFirstName = TextEditingController();
+  final TextEditingController txtAge = TextEditingController();
+  final TextEditingController txtEmail = TextEditingController();
+  final TextEditingController txtPassword = TextEditingController();
+  final TextEditingController txtConfirmPassword = TextEditingController();
 
   void register() async {
     String last_name = txtLastName.text.trim();
@@ -29,7 +29,8 @@ class _RegisterPageState extends State<RegisterPage> {
         first_name.isEmpty ||
         age.isEmpty ||
         email.isEmpty ||
-        password.isEmpty) {
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Please fill out all fields")),
@@ -45,12 +46,19 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
 
-    bool success = await AuthService.register(
-        last_name, first_name, age, email, password, confirmPassword);
+    // Call updated AuthService.register
+    final result = await AuthService.register(
+      lastName: last_name,
+      firstName: first_name,
+      age: age,
+      email: email,
+      password: password,
+      passwordConfirmation: confirmPassword,
+    );
 
     if (!mounted) return;
 
-    if (success) {
+    if (result['success']) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Registration successful! Please log in.")),
       );
@@ -59,9 +67,15 @@ class _RegisterPageState extends State<RegisterPage> {
         MaterialPageRoute(builder: (context) => const LoginPage()),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Registration failed. Try again.")),
-      );
+      // Show detailed validation errors
+      final errors = result['errors'] as Map<String, dynamic>;
+      errors.forEach((field, messages) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  "${field[0].toUpperCase()}${field.substring(1)}: ${messages.join(', ')}")),
+        );
+      });
     }
   }
 
