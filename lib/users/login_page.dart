@@ -4,6 +4,7 @@ import 'package:crud_lab/users/register_page.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../providers/auth_providers.dart';
+import '../screens/coffee_list.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -28,7 +29,15 @@ class _LoginPageState extends State<LoginPage> {
 
       if (token != null) {
         if (!mounted) return;
+
+        // Update provider
         Provider.of<AuthProvider>(context, listen: false).login(token);
+
+        // 🚀 Automatically go to Coffee List
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const CoffeeListScreen()),
+        );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -71,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                   Icon(
                     Icons.coffee_outlined,
                     size: 80,
-                    color: const Color(0xFFB58C6E),
+                    color: Color(0xFFB58C6E),
                   ),
                   const SizedBox(height: 12),
                   const Text(
@@ -93,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                     child: ElevatedButton(
                       onPressed: login,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFB58C6E),
+                        backgroundColor: Color(0xFFB58C6E),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -120,7 +129,6 @@ class _LoginPageState extends State<LoginPage> {
                       style: TextStyle(color: Color(0xFF8B6D5C)),
                     ),
                   ),
-                  const SizedBox(height: 10),
                 ],
               ),
             ),

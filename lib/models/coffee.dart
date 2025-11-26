@@ -6,11 +6,28 @@ class Coffee {
   String? ingredients;
   double? minPrice;
   double? maxPrice;
+  bool? likedByUser;
+  bool? favoritedByUser;
+  int? likes;
+  int? favorites;
+  String? imageUrl;
 
-  Coffee({this.id, this.coffeeName = '', this.coffeeType = '', this.description= '', this.ingredients= '', this.minPrice, this.maxPrice,});
+  Coffee({
+    this.id,
+    this.coffeeName = '',
+    this.coffeeType = '',
+    this.description = '',
+    this.ingredients = '',
+    this.minPrice,
+    this.maxPrice,
+    this.likedByUser = false,
+    this.favoritedByUser = false,
+    this.likes = 0,
+    this.favorites = 0,
+    this.imageUrl,
+  });
 
   factory Coffee.fromJson(Map<String, dynamic> json) {
-    // Safely parse ID
     int? parseId(dynamic value) {
       if (value == null) return null;
       if (value is int) return value;
@@ -34,7 +51,11 @@ class Coffee {
       ingredients: json['ingredients']?.toString() ?? '',
       minPrice: parseDouble(json['minimum_price']),
       maxPrice: parseDouble(json['maximum_price']),
-
+      likedByUser: json['likedByUser'] ?? false,
+      favoritedByUser: json['favoritedByUser'] ?? false,
+      likes: json['likes'] ?? 0,
+      favorites: json['favorites'] ?? 0,
+      imageUrl: json['image_url']?.toString(),
     );
   }
 
@@ -47,6 +68,11 @@ class Coffee {
       'ingredients': ingredients,
       'minimum_price': minPrice,
       'maximum_price': maxPrice,
+      'likedByUser': likedByUser,
+      'favoritedByUser': favoritedByUser,
+      'likes': likes,
+      'favorites': favorites,
+      'image_url': imageUrl,
     };
   }
 }
