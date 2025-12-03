@@ -239,84 +239,245 @@ class _CoffeeListScreenState extends State<CoffeeListScreen>
     }
   }
 
-  Widget _preferenceOverlay() {
-    return Container(
-      color: Colors.black54,
-      alignment: Alignment.center,
-      child: Container(
-        width: 320,
-        padding: const EdgeInsets.all(20),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              'Set Your Preferences',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+ Widget _preferenceOverlay() {
+  return Stack(
+    children: [
+      // Background dim
+      Container(
+        color: Colors.black.withOpacity(0.45),
+      ),
+
+      // Skip button (top-right)
+      Positioned(
+        top: 50,
+        right: 30,
+        child: GestureDetector(
+          onTap: () async {
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setBool('preferenceShown', true);
+            setState(() => showPreference = false);
+          },
+          child: Text(
+            "Skip",
+            style: TextStyle(
+              color: Colors.grey.shade300,
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
             ),
-            const SizedBox(height: 16),
-            const Text('Choose your favorite coffee types:'),
-            const SizedBox(height: 16),
-            ...coffeePreferences.keys.map((type) {
-              return CheckboxListTile(
-                title: Text(type),
-                value: coffeePreferences[type],
-                onChanged: (val) {
-                  setState(() {
-                    coffeePreferences[type] = val ?? false;
-                  });
-                },
-              );
-            }).toList(),
-            const SizedBox(height: 12),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          ),
+        ),
+      ),
+
+      // Card
+      Center(
+        child: Container(
+          width: MediaQuery.of(context).size.width * 0.88,
+          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 24),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.95),
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
-                TextButton(
-                  onPressed: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setBool('preferenceShown', true);
-                    setState(() {
-                      showPreference = false;
-                    });
-                  },
-                  child: const Text('Skip'),
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF8B6D5C),
+                Center(
+                  child: Text(
+                    "My Coffee Preferences",
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.brown.shade700,
+                    ),
                   ),
-                  onPressed: () async {
-                    final prefs = await SharedPreferences.getInstance();
-                    await prefs.setBool('preferenceShown', true);
-                    for (var entry in coffeePreferences.entries) {
-                      await prefs.setBool('pref_${entry.key}', entry.value);
-                    }
-                    setState(() {
-                      showPreference = false;
-                    });
-                  },
-                  child: const Text('Save'),
+                ),
+
+                const SizedBox(height: 25),
+
+                // Coffee Type
+                Text("Coffee Type",
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.brown.shade700)),
+                const SizedBox(height: 8),
+                TextField(
+                  decoration: InputDecoration(
+                    hintText: "e.g. strong, balanced, sweet",
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 18),
+
+                // Allowance
+                Text("Coffee Allowance (₱)",
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.brown.shade700)),
+                const SizedBox(height: 8),
+                TextField(
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    hintText: "",
+                    filled: true,
+                    fillColor: Colors.grey.shade100,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 18),
+
+                // Temperature Dropdown
+                Text("Temperature",
+                    style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.brown.shade700)),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade100,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      hint: const Text("Select Temperature"),
+                      items: ["Hot", "Iced", "Warm"]
+                          .map((e) =>
+                              DropdownMenuItem(value: e, child: Text(e)))
+                          .toList(),
+                      onChanged: (value) {},
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: 20),
+
+                // Allergies
+                Row(
+                  children: [
+                    Expanded(
+                      child: CheckboxListTile(
+                        title: const Text("Lactose Intolerant"),
+                        value: false,
+                        onChanged: (v) {},
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
+                    ),
+                    Expanded(
+                      child: CheckboxListTile(
+                        title: const Text("Nut Allergy"),
+                        value: false,
+                        onChanged: (v) {},
+                        controlAffinity: ListTileControlAffinity.leading,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 16),
+
+                // Milk Alternative Dropdown (two side by side)
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            hint: const Text("Milk Options"),
+                            items: ["Soy", "Almond", "Oat", "None"]
+                                .map((e) =>
+                                    DropdownMenuItem(value: e, child: Text(e)))
+                                .toList(),
+                            onChanged: (value) {},
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.grey.shade300),
+                        ),
+                        child: DropdownButtonHideUnderline(
+                          child: DropdownButton<String>(
+                            hint: const Text("Sweetness Level"),
+                            items: ["None", "25%", "50%", "100%"]
+                                .map((e) =>
+                                    DropdownMenuItem(value: e, child: Text(e)))
+                                .toList(),
+                            onChanged: (value) {},
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(height: 28),
+
+                // Save Button
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF8B6D5C),
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                    ),
+                    onPressed: () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setBool('preferenceShown', true);
+                      setState(() => showPreference = false);
+                    },
+                    child: const Text(
+                      "Save Changes",
+                      style: TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
+                  ),
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
-    );
-  }
+    ],
+  );
+}
+
 
   @override
   Widget build(BuildContext context) {
     final localImages = [
-      'assets/images/default_coffee.jpg',
-      'assets/images/espresso.jpg',
-      'assets/images/mocha.jpg',
-      'assets/images/cappuccino.jpg',
-      'assets/images/americano.jpg',
+      'assets/images/storage/coffees/espresso.jpg',
+      'assets/images/storage/coffees/cappuccino.jpg',
+      'assets/images/storage/coffees/mocha.jpg',
+      'assets/images/storage/coffees/americano.jpg',
+      'assets/images/storage/coffees/caramel-latte.jpg',
+      
     ];
 
     return Scaffold(

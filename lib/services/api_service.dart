@@ -5,6 +5,9 @@ import '../models/coffee.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiService {
+  // ===============================
+  // GET COFFEES
+  // ===============================
   static Future<List<Coffee>> getCoffees({required String token}) async {
     final response = await http.get(
       Uri.parse('$baseUrl/coffees'),
@@ -17,7 +20,9 @@ class ApiService {
     if (response.statusCode == 200) {
       final decoded = json.decode(response.body);
 
-      // handle both { data: [...] } or raw list [...]
+      // Either format:
+      // { "data": [...] }
+      // or [...]
       final List list = decoded is Map ? decoded['data'] : decoded;
 
       return list
@@ -28,17 +33,19 @@ class ApiService {
     }
   }
 
-
+  // ===============================
+  // CREATE COFFEE
+  // ===============================
   static Future<void> createCoffee(Coffee coffee) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
 
-  final minPrice = double.tryParse(coffee.minPrice.toString()) ?? 0;
-  final maxPrice = double.tryParse(coffee.maxPrice.toString()) ?? 0;
+    final minPrice = double.tryParse(coffee.minPrice.toString()) ?? 0;
+    final maxPrice = double.tryParse(coffee.maxPrice.toString()) ?? 0;
 
-  if (minPrice > maxPrice) {
-    throw Exception('Minimum price cannot be greater than maximum price.');
-  }
+    if (minPrice > maxPrice) {
+      throw Exception('Minimum price cannot be greater than maximum price.');
+    }
 
     final response = await http.post(
       Uri.parse('$baseUrl/coffees'),
@@ -54,6 +61,8 @@ class ApiService {
         "ingredients": coffee.ingredients,
         "minimum_price": minPrice,
         "maximum_price": maxPrice,
+        // support inserting image url from assets or server
+        "image_url": coffee.imageUrl,
       }),
     );
 
@@ -62,6 +71,9 @@ class ApiService {
     }
   }
 
+  // ===============================
+  // UPDATE COFFEE
+  // ===============================
   static Future<void> updateCoffee(String id, Coffee coffee) async {
     final prefs = await SharedPreferences.getInstance();
     final token = prefs.getString('token') ?? '';
@@ -72,7 +84,6 @@ class ApiService {
     if (minPrice > maxPrice) {
       throw Exception('Minimum price cannot be greater than maximum price.');
     }
-
 
     final response = await http.put(
       Uri.parse('$baseUrl/coffees/$id'),
@@ -88,6 +99,7 @@ class ApiService {
         "ingredients": coffee.ingredients,
         "minimum_price": minPrice,
         "maximum_price": maxPrice,
+        "image_url": coffee.imageUrl,
       }),
     );
 
@@ -95,6 +107,10 @@ class ApiService {
       throw Exception('Failed to update coffee: ${response.body}');
     }
   }
+
+  // ===============================
+  // DELETE COFFEE
+  // ===============================
   static Future<void> deleteCoffee(String id, String token) async {
     final response = await http.delete(
       Uri.parse('$baseUrl/coffees/$id'),

@@ -53,26 +53,9 @@ class Coffee {
       maxPrice: parseDouble(json['maximum_price']),
       likedByUser: json['likedByUser'] ?? false,
       favoritedByUser: json['favoritedByUser'] ?? false,
-      likes: json['likes'] ?? 0,
-      favorites: json['favorites'] ?? 0,
+      likes: json['likes'] is int ? json['likes'] : int.tryParse(json['likes']?.toString() ?? "0") ?? 0,
+      favorites: json['favorites'] is int ? json['favorites'] : int.tryParse(json['favorites']?.toString() ?? "0") ?? 0,
       imageUrl: json['image_url']?.toString(),
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id ?? 0,
-      'coffee_name': coffeeName,
-      'coffee_type': coffeeType,
-      'description': description,
-      'ingredients': ingredients,
-      'minimum_price': minPrice,
-      'maximum_price': maxPrice,
-      'likedByUser': likedByUser,
-      'favoritedByUser': favoritedByUser,
-      'likes': likes,
-      'favorites': favorites,
-      'image_url': imageUrl,
-    };
   }
 }
