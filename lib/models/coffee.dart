@@ -6,11 +6,28 @@ class Coffee {
   String? ingredients;
   double? minPrice;
   double? maxPrice;
+  bool? likedByUser;
+  bool? favoritedByUser;
+  int? likes;
+  int? favorites;
+  String? imageUrl;
 
-  Coffee({this.id, this.coffeeName = '', this.coffeeType = '', this.description= '', this.ingredients= '', this.minPrice, this.maxPrice,});
+  Coffee({
+    this.id,
+    this.coffeeName = '',
+    this.coffeeType = '',
+    this.description = '',
+    this.ingredients = '',
+    this.minPrice,
+    this.maxPrice,
+    this.likedByUser = false,
+    this.favoritedByUser = false,
+    this.likes = 0,
+    this.favorites = 0,
+    this.imageUrl,
+  });
 
   factory Coffee.fromJson(Map<String, dynamic> json) {
-    // Safely parse ID
     int? parseId(dynamic value) {
       if (value == null) return null;
       if (value is int) return value;
@@ -34,19 +51,11 @@ class Coffee {
       ingredients: json['ingredients']?.toString() ?? '',
       minPrice: parseDouble(json['minimum_price']),
       maxPrice: parseDouble(json['maximum_price']),
-
+      likedByUser: json['likedByUser'] ?? false,
+      favoritedByUser: json['favoritedByUser'] ?? false,
+      likes: json['likes'] is int ? json['likes'] : int.tryParse(json['likes']?.toString() ?? "0") ?? 0,
+      favorites: json['favorites'] is int ? json['favorites'] : int.tryParse(json['favorites']?.toString() ?? "0") ?? 0,
+      imageUrl: json['image_url']?.toString(),
     );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id ?? 0,
-      'coffee_name': coffeeName,
-      'coffee_type': coffeeType,
-      'description': description,
-      'ingredients': ingredients,
-      'minimum_price': minPrice,
-      'maximum_price': maxPrice,
-    };
   }
 }
